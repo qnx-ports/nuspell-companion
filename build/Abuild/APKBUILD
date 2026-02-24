@@ -1,0 +1,50 @@
+# Alpine-Contributor: Rasmus Thomsen <oss@cogitri.dev>
+# Alpine-Maintainer: Natanael Copa <ncopa@alpinelinux.org>
+# Maintainer: Felix Xing <fxing@qnx.com>
+pkgname=nuspell
+pkgver=5.1.6
+pkgrel=0
+pkgdesc="Free and open source C++ spell checking library"
+url="https://nuspell.github.io/"
+arch="all"
+license="LGPL-3.0-or-later"
+depends_dev="icu-dev "
+depends="libc++ $pkgname-libs=$pkgver-r$pkgrel"
+makedepends="$depends_dev cmake ninja clang libc++-dev"
+checkdepends="catch2 icu-data"
+subpackages="$pkgname-dev $pkgname-libs:_libs $pkgname-doc"
+source="https://github.com/nuspell/nuspell/archive/v$pkgver/nuspell-$pkgver.tar.gz"
+
+build() {
+    CC=clang \
+    CXX=clang++ \
+    CFLAGS="$CFLAGS -Qunused-arguments" \
+    CXXFLAGS="$CXXFLAGS -Qunused-arguments" \
+    CPPFLAGS="$CPPFLAGS -Qunused-arguments" \
+    cmake -B build -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR=lib \
+        -DBUILD_SHARED_LIBS=True \
+        -DCMAKE_BUILD_TYPE=None \
+        -DBUILD_TESTING="$(want_check && echo ON || echo OFF)" \
+        -DBUILD_DOCS=OFF \
+        $CMAKE_CROSSOPTS
+    cmake --build build
+}
+
+check() {
+    ctest --test-dir build
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}
+
+_libs() {
+    default_libs
+    depends="libc++ icu-libs"
+}
+
+sha512sums="
+ab6d9394a55d9a2a347ccae47aeef6a96af70f421ad6ea8f7ac7fde2052790f37fb1c7ec3112daac7600d193430a560cb1915ab6557c9353717f65cb32f13ab8  nuspell-5.1.6.tar.gz
+"
