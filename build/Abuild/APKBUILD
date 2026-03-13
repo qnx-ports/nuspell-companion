@@ -3,7 +3,7 @@
 # Maintainer: Felix Xing <fxing@qnx.com>
 pkgname=nuspell
 pkgver=5.1.6
-pkgrel=0
+pkgrel=${pkgrel:-0}
 pkgdesc="Free and open source C++ spell checking library"
 url="https://nuspell.github.io/"
 arch="all"
@@ -45,6 +45,7 @@ _libs() {
     depends="libc++ icu-libs"
 }
 
+options="$options ${DISABLE_CHECK:+!check}"
 sha512sums="
 ab6d9394a55d9a2a347ccae47aeef6a96af70f421ad6ea8f7ac7fde2052790f37fb1c7ec3112daac7600d193430a560cb1915ab6557c9353717f65cb32f13ab8  nuspell-5.1.6.tar.gz
 "
